@@ -8,7 +8,18 @@ agents:
     category: writing
     status: ready
     visibility: private
-    entrypoint: Drafter.py
+    entrypoint: agents/drafter/Drafter.py
     manifest: agents/drafter/agent.yaml
     tags: [writing, documents, revision]
     featured: true
+  - id: rag
+    name: RAG Researcher
+    tagline: Ask grounded questions over a private document collection.
+    description: A retrieval-augmented research agent that indexes a document and answers questions with cited context.
+    category: research
+    status: building
+    visibility: private
+    entrypoint: agents/rag/rag_agent.py
+    manifest: agents/rag/agent.yaml
+    tags: [research, retrieval, documents]
+    featured: false
