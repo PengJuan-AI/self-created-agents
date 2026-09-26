@@ -1,0 +1,32 @@
+id: drafter
+name: Drafter
+version: 0.1.0
+status: ready
+visibility: private
+tagline: Draft and revise documents with an AI writing assistant.
+description: A local writing agent for drafting, revising, and saving text documents.
+category: writing
+tags: [writing, documents, revision]
+entrypoint: Drafter.py
+runtime:
+  language: python
+  command: python3 Drafter.py
+capabilities:
+  - draft_document
+  - revise_document
+  - save_document
+inputs:
+  - name: message
+    type: text
+    required: true
+outputs:
+  - name: response
+    type: text
+  - name: document
+    type: text
+dependencies:
+  - python-dotenv
+  - langchain-core
+  - langchain-deepseek
+owner: personal
+featured: true

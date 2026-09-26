@@ -1,0 +1,14 @@
+version: 1
+updated: 2026-09-25
+agents:
+  - id: drafter
+    name: Drafter
+    tagline: Draft and revise documents with an AI writing assistant.
+    description: A local writing agent for drafting, revising, and saving text documents.
+    category: writing
+    status: ready
+    visibility: private
+    entrypoint: Drafter.py
+    manifest: agents/drafter/agent.yaml
+    tags: [writing, documents, revision]
+    featured: true

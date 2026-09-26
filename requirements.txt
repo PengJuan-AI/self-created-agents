@@ -1,0 +1,14 @@
+langchain-deepseek
+langchain_openai
+langchain-classic
+langchain-community
+langchain-huggingface
+langchain_chroma
+langchain
+
+python-dotenv
+asyncio
+
+crewai
+sentence_transformers
+pymupdf

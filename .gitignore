@@ -13,6 +13,14 @@ env/
 # Generated drafting output
 documents/
 
+# Personal workspace data
+workspace/inbox/*
+workspace/outputs/*
+workspace/archive/*
+!workspace/inbox/.gitkeep
+!workspace/outputs/.gitkeep
+!workspace/archive/.gitkeep
+
 # Local tooling and OS files
 .DS_Store
 .pytest_cache/

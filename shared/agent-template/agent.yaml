@@ -1,0 +1,19 @@
+id: replace-with-kebab-case-id
+name: Replace with a human-friendly name
+version: 0.1.0
+status: idea
+visibility: private
+tagline: One sentence explaining the agent's value.
+description: A longer explanation of what the agent does and the problem it solves.
+category: general
+tags: []
+entrypoint: src/main.py
+runtime:
+  language: python
+  command: python src/main.py
+capabilities: []
+inputs: []
+outputs: []
+dependencies: []
+owner: personal
+featured: false
