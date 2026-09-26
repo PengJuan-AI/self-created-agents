@@ -12,3 +12,7 @@ asyncio
 crewai
 sentence_transformers
 pymupdf
+
+fastapi
+uvicorn
+pyyaml
