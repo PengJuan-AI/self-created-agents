@@ -1,0 +1,34 @@
+id: rag
+name: RAG Researcher
+version: 0.1.0
+status: building
+visibility: private
+tagline: Ask grounded questions over a private document collection.
+description: A retrieval-augmented research agent that indexes a document and answers questions with cited context.
+category: research
+tags: [research, retrieval, documents]
+entrypoint: rag_agent.py
+runtime:
+  language: python
+  command: python3 rag_agent.py
+capabilities:
+  - index_document
+  - retrieve_context
+  - answer_with_citations
+inputs:
+  - name: question
+    type: text
+    required: true
+outputs:
+  - name: answer
+    type: text
+dependencies:
+  - python-dotenv
+  - langchain-deepseek
+  - langchain-huggingface
+  - langgraph
+  - langchain-community
+  - langchain-chroma
+  - langchain-text-splitters
+owner: personal
+featured: false

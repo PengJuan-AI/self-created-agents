@@ -1,5 +1,7 @@
 # Architecture direction
 
+The repository's primary product is the **Agents Hub**. It gives independent modules a shared discovery and access layer without turning them into one coupled application.
+
 ```text
                    +------------------+
                    |      Hub UI       |

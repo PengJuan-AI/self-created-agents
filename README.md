@@ -1,56 +1,39 @@
 # Self-Created Agents
 
-> This repository is now organized as a home for multiple self-created agents. Drafter is the first agent; the project structure and onboarding guide live in [AGENTS.md](AGENTS.md).
+This repository is an agents hub: a personal workbench and future public catalog for independent AI agent modules.
 
-Drafter is a small local web application for drafting and revising documents with an AI writing assistant. It serves a browser interface and keeps each browser session's working document in memory.
-
-## Requirements
-
-- Python 3.10 or newer
-- A DeepSeek API key
-- The Python packages used by the agent: `python-dotenv`, `langchain-core`, and `langchain-deepseek`
-
-Install the dependencies in your preferred virtual environment, for example:
+## Start the Hub
 
 ```bash
-python -m pip install python-dotenv langchain-core langchain-deepseek
+python3 hub/server.py
 ```
 
-## Configuration
+Open <http://127.0.0.1:8080>. The Hub is the entry website; it is intentionally separate from every individual agent.
 
-Create a local `.env` file (it is intentionally ignored by Git):
+## Repository structure
 
-```dotenv
-DEEPSEEK_API_KEY=your_api_key_here
-# Optional; defaults to deepseek-v4-pro
-DEEPSEEK_MODEL=deepseek-v4-pro
-```
+- `agents/<agent-id>/` — an independent agent module with its own code, manifest, docs, tests, config, and assets
+- `hub/` — the Hub entry page and local web server
+- `registry/agents.yaml` — the catalog of modules discovered by the Hub
+- `shared/agent-template/` — starting point for a new agent module
+- `workspace/` — private inputs, outputs, and archive
+- `docs/` — architecture, roadmap, and contributor guidance
 
-## Run
+## Included agents
 
-From this directory, start the server:
+- `agents/drafter/` — a local document drafting and revision agent with its own browser interface
+- `agents/rag/` — a building-stage retrieval-augmented research agent
+
+## Add an agent
 
 ```bash
-cd agents/drafter
-python3 Drafter.py
+cp -R shared/agent-template agents/my-agent
 ```
 
-Then open <http://127.0.0.1:8000> in a browser. You can choose a different host or port with `--host` and `--port`.
+Complete its `agent.yaml`, implementation, README, tests, and registry entry. An agent should be runnable independently from the terminal or an API. The Hub should integrate through the manifest and a future adapter contract, not through assumptions about the agent's internal framework.
 
-The health endpoint is available at `/api/health`. Explicit save requests create text files under the ignored `documents/` directory.
-
-## Project layout
-
-- `agents/` — one folder per agent, including manifests and agent-specific docs/tests/assets
-- `agents/drafter/Drafter.py` — Drafter HTTP server and agent/tool integration
-- `agents/drafter/static/index.html` — Drafter browser UI
-- `agents/drafter/documents/` — generated drafts; created at runtime and ignored by Git
-- `registry/agents.yaml` — catalog consumed by the future Agent Hub
-- `shared/agent-template/` — copy this when creating a new agent
-- `hub/` — planned workbench and public showcase interface
-- `workspace/` — local inputs, outputs, and archive for personal use
-- `docs/` — architecture, roadmap, and instructions for adding agents
+See [AGENTS.md](AGENTS.md) and [docs/adding-an-agent.md](docs/adding-an-agent.md) for the full convention.
 
 ## Security
 
-Never commit API keys. Keep credentials in `.env` or another local secret manager, and rotate any key that has been exposed publicly.
+Never commit API keys, private documents, vector stores, or unreviewed generated content. Keep secrets in `.env` and personal runtime data in `workspace/`.
