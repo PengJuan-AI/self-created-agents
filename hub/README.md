@@ -7,13 +7,17 @@ The Hub is the front door for this repository. It supports two modes:
 
 ## Current entrypoint
 
-Run the local Hub from the repository root:
+The Hub frontend is now a Vite + React app in `frontend/`. Start it with:
 
 ```bash
-python3 hub/server.py
+cd frontend
+npm install
+npm run dev
 ```
 
-Then open <http://127.0.0.1:8080>. The home page is `hub/index.html`; it is intentionally independent from any one agent.
+`hub/index.html` is retained as the lightweight HTML entrypoint used by the project layout.
+
+Run the API with `uvicorn backend.main:app --reload`.
 
 ## Product principles
 
