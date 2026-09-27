@@ -6,7 +6,7 @@ import yaml
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers.drafter import router as drafter_router
+from backend.routers.drafter import router as drafter_router
 
 app = FastAPI(title="Agents Hub API", version="0.1.0")
 
