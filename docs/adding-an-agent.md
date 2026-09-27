@@ -15,6 +15,7 @@ Then:
 5. Add a matching entry to `registry/agents.yaml`.
 6. Decide whether the agent is `private`, `unlisted`, or `public`.
 7. Add a showcase image or icon under `assets/` when the Hub needs one.
+8. Run `python tools/validate_agents.py` to confirm the registry and manifest are consistent.
 
 ## Design rules
 
@@ -25,12 +26,18 @@ Then:
 - Put reusable code in `shared/` only when at least two agents need it.
 - Treat the registry as metadata, not as the implementation.
 
-## Future validation
+## Adapter contract
 
-The intended validation command is:
+To expose the agent through the Hub, add an adapter in `backend/adapters/` that
+implements the `AgentAdapter` protocol (`backend/adapters/base.py`): `metadata`,
+`health`, and `run`. Then register its routes in `backend/routers/` and include
+them in `backend/main.py`.
+
+## Validation
+
+Run the validator to check for duplicate IDs, invalid statuses, missing
+entrypoints, and registry/manifest mismatches:
 
 ```bash
 python tools/validate_agents.py
 ```
-
-The validator does not exist yet; this is the planned contract for the Hub and CI layer.
