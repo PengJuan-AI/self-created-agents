@@ -1,8 +1,14 @@
-"""Drafter's agent core: document drafting and revision service."""
+"""Drafter's agent core: document drafting and revision service.
+
+Run this file directly for a terminal interface, or import ``DRAFTER`` to
+integrate the core into a larger application (see ``backend/routers/drafter.py``).
+"""
 
 from __future__ import annotations
 
+import argparse
 import os
+import sys
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -190,3 +196,60 @@ class DrafterService:
 
 
 DRAFTER = DrafterService()
+
+
+def _respond_once(session_id: str | None, message: str) -> None:
+    try:
+        result = DRAFTER.respond(session_id, message)
+    except ValueError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        raise SystemExit(1) from error
+    except AgentConfigurationError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        raise SystemExit(1) from error
+    print(result["response"])
+
+
+def _interactive_session() -> None:
+    print("Drafter interactive session. Type a request, or press Ctrl-D to exit.")
+    session_id: str | None = None
+    while True:
+        try:
+            line = input("> ")
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return
+        if not line.strip():
+            continue
+        try:
+            result = DRAFTER.respond(session_id, line)
+        except ValueError as error:
+            print(f"Error: {error}")
+            continue
+        except AgentConfigurationError as error:
+            print(f"Error: {error}")
+            return
+        session_id = result["session_id"]
+        print(result["response"])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Run the Drafter agent from the terminal.",
+    )
+    parser.add_argument(
+        "message",
+        nargs="?",
+        help="A single drafting request. Omit to start an interactive session.",
+    )
+    args = parser.parse_args()
+
+    if args.message:
+        _respond_once(None, args.message)
+        return
+
+    _interactive_session()
+
+
+if __name__ == "__main__":
+    main()
