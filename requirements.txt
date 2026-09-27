@@ -1,18 +1,29 @@
-langchain-deepseek
-langchain_openai
-langchain-classic
-langchain-community
-langchain-huggingface
-langchain_chroma
-langchain
+# Agent Hub — Python runtime dependencies.
+# Grouped by concern. Agent-specific dependencies belong in each agent's
+# manifest (agent.yaml) and should migrate out of this shared list over time.
 
-python-dotenv
-asyncio
-
-crewai
-sentence_transformers
-pymupdf
-
+# --- Backend (FastAPI) ---
 fastapi
 uvicorn
 pyyaml
+
+# --- Shared runtime ---
+python-dotenv
+
+# --- Drafter agent (LangChain + DeepSeek) ---
+langchain
+langchain-deepseek
+langchain-openai
+langchain-classic
+
+# --- RAG agent (retrieval stack) ---
+langchain-community
+langchain-huggingface
+langchain-chroma
+langchain-text-splitters
+langgraph
+sentence-transformers
+pymupdf
+
+# --- Multi-agent framework ---
+crewai
