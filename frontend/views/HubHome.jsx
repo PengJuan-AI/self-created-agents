@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import AgentCard from "../components/AgentCard.jsx";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+
 export default function HubHome() {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ export default function HubHome() {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    fetch("/api/agents")
+    fetch(`${API_BASE}/api/agents`)
       .then((res) => {
         if (!res.ok) throw new Error(`Failed to load agents (${res.status})`);
         return res.json();

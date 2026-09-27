@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../app/drafter.css";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const SESSION_KEY = "drafter-session-id";
 
 export default function DrafterWorkspace() {
@@ -20,7 +21,7 @@ export default function DrafterWorkspace() {
     setStatus("Writing...");
     setResponse("Drafter is working on your request.");
     try {
-      const reply = await fetch("/api/agents/drafter/draft", {
+      const reply = await fetch(`${API_BASE}/api/agents/drafter/draft`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: prompt, session_id: localStorage.getItem(SESSION_KEY) }),

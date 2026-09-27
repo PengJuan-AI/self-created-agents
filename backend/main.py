@@ -1,5 +1,6 @@
 """FastAPI service for the Agents Hub."""
 
+import os
 from pathlib import Path
 
 import yaml
@@ -12,7 +13,11 @@ app = FastAPI(title="Agents Hub API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+    # 生产环境通过 CORS_ORIGINS 环境变量注入前端域名（逗号分隔）
+    allow_origins=os.getenv(
+        "CORS_ORIGINS",
+        "http://127.0.0.1:5173,http://localhost:5173",
+    ).split(","),
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
