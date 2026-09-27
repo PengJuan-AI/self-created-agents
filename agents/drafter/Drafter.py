@@ -1,20 +1,18 @@
-"""Drafter's HTTP backend and local development server.
+"""Drafter's agent core: document drafting and revision service.
 
-Run this file directly, then open http://127.0.0.1:8000 in a browser.
+Run this file directly for a terminal interface, or import ``DRAFTER`` to
+integrate the core into a larger application (see ``backend/routers/drafter.py``).
 """
 
 from __future__ import annotations
 
 import argparse
-import json
 import os
+import sys
 import threading
 from dataclasses import dataclass, field
-from http import HTTPStatus
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
 from uuid import uuid4
 
 try:
@@ -22,14 +20,12 @@ try:
 
     load_dotenv()
 except ImportError:
-    # The server can still render the UI and report its missing AI dependency.
+    # The service can still report its missing AI dependency.
     pass
 
 
 PROJECT_DIRECTORY = Path(__file__).resolve().parent
-STATIC_DIRECTORY = PROJECT_DIRECTORY / "static"
 DOCUMENT_DIRECTORY = PROJECT_DIRECTORY / "documents"
-MAX_REQUEST_BYTES = 64 * 1024
 MAX_MESSAGE_LENGTH = 12_000
 MAX_HISTORY_MESSAGES = 24
 
@@ -202,81 +198,57 @@ class DrafterService:
 DRAFTER = DrafterService()
 
 
-class DrafterRequestHandler(SimpleHTTPRequestHandler):
-    """Serve the static interface and the JSON drafting endpoint."""
+def _respond_once(session_id: str | None, message: str) -> None:
+    try:
+        result = DRAFTER.respond(session_id, message)
+    except ValueError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        raise SystemExit(1) from error
+    except AgentConfigurationError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        raise SystemExit(1) from error
+    print(result["response"])
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, directory=str(STATIC_DIRECTORY), **kwargs)
 
-    def do_GET(self) -> None:  # noqa: N802
-        if urlparse(self.path).path == "/api/health":
-            self._send_json(HTTPStatus.OK, DRAFTER.status())
-            return
-        super().do_GET()
-
-    def do_POST(self) -> None:  # noqa: N802
-        if urlparse(self.path).path != "/api/draft":
-            self._send_json(HTTPStatus.NOT_FOUND, {"error": "Not found."})
-            return
-
+def _interactive_session() -> None:
+    print("Drafter interactive session. Type a request, or press Ctrl-D to exit.")
+    session_id: str | None = None
+    while True:
         try:
-            content_length = int(self.headers.get("Content-Length", "0"))
-        except ValueError:
-            content_length = 0
-        if content_length <= 0 or content_length > MAX_REQUEST_BYTES:
-            self._send_json(HTTPStatus.BAD_REQUEST, {"error": "Request body is invalid or too large."})
+            line = input("> ")
+        except (EOFError, KeyboardInterrupt):
+            print()
             return
-
+        if not line.strip():
+            continue
         try:
-            payload = json.loads(self.rfile.read(content_length))
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            self._send_json(HTTPStatus.BAD_REQUEST, {"error": "Request body must be valid JSON."})
-            return
-
-        if not isinstance(payload, dict):
-            self._send_json(HTTPStatus.BAD_REQUEST, {"error": "Request body must be a JSON object."})
-            return
-
-        try:
-            result = DRAFTER.respond(payload.get("session_id"), payload.get("message", ""))
+            result = DRAFTER.respond(session_id, line)
         except ValueError as error:
-            self._send_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
+            print(f"Error: {error}")
+            continue
         except AgentConfigurationError as error:
-            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": str(error)})
-        except Exception:
-            self._send_json(
-                HTTPStatus.INTERNAL_SERVER_ERROR,
-                {"error": "Drafter could not complete that request. Please try again."},
-            )
-        else:
-            self._send_json(HTTPStatus.OK, result)
-
-    def _send_json(self, status: HTTPStatus, payload: dict[str, Any]) -> None:
-        body = json.dumps(payload).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
-        self.end_headers()
-        self.wfile.write(body)
-
-    def log_message(self, format: str, *args: Any) -> None:
-        # Keep terminal output focused on server startup and application errors.
-        return
+            print(f"Error: {error}")
+            return
+        session_id = result["session_id"]
+        print(result["response"])
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the Drafter web interface.")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
+    parser = argparse.ArgumentParser(
+        description="Run the Drafter agent from the terminal.",
+    )
+    parser.add_argument(
+        "message",
+        nargs="?",
+        help="A single drafting request. Omit to start an interactive session.",
+    )
     args = parser.parse_args()
 
-    with ThreadingHTTPServer((args.host, args.port), DrafterRequestHandler) as server:
-        print(f"Drafter is running at http://{args.host}:{args.port}")
-        try:
-            server.serve_forever()
-        except KeyboardInterrupt:
-            print("\nDrafter stopped.")
+    if args.message:
+        _respond_once(None, args.message)
+        return
+
+    _interactive_session()
 
 
 if __name__ == "__main__":

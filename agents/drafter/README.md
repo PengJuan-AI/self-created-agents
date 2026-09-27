@@ -1,11 +1,20 @@
 # Drafter
 
-Drafter is the first agent in this toolbox. Its implementation, browser UI, manifest, tests, and assets live in this folder.
+Drafter is the first agent in this toolbox. Its implementation, manifest, tests, and assets live in this folder.
 
-Run it from this folder with:
+The agent core lives in `Drafter.py` and exposes a `DrafterService` with a `DRAFTER` singleton. It has no standalone web server; the hub backend adapts it through `backend/routers/drafter.py`, and the React UI lives under `frontend/views/DrafterWorkspace.jsx`.
+
+Run the whole hub from the repository root:
 
 ```bash
-python3 Drafter.py
+# API (serves /api/agents/drafter/*)
+cd backend
+uvicorn main:app --reload --port 8000
+
+# frontend (Vite + React)
+cd frontend
+npm install
+npm run dev
 ```
 
-The browser UI is served from `static/`. Generated documents are saved under this agent's local `documents/` directory.
+Open <http://127.0.0.1:5173> and navigate to the Drafter workspace. Generated documents are saved under this agent's local `documents/` directory.

@@ -22,12 +22,22 @@ The repository's primary product is the **Agents Hub**. It gives independent mod
        +-----------+   +-----------+   +-----------+
 ```
 
-Each agent should expose a small adapter contract: metadata, health/readiness, and a run operation. The Hub should not need to know the internal framework or prompt design of an agent.
+Each agent exposes a small adapter contract, defined by the `AgentAdapter`
+protocol in `backend/adapters/base.py`:
+
+- `metadata()` — the agent's manifest (identity, status, inputs, outputs).
+- `health()` — readiness status.
+- `run(request)` — the agent's primary operation.
+
+The backend adapts an agent through this contract and never imports an agent's
+internal framework directly. See `backend/adapters/drafter.py` for the reference
+implementation.
 
 Keep these concerns separate:
 
 - source code and tests live with each agent;
 - shared utilities live in `shared/`;
 - discoverability metadata lives in `registry/`;
-- UI and orchestration live in `hub/`;
+- UI lives in `frontend/`;
+- API and adapters live in `backend/`;
 - personal run data lives in `workspace/`.

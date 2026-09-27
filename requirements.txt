@@ -1,14 +1,29 @@
+# Agent Hub — Python runtime dependencies.
+# Grouped by concern. Agent-specific dependencies belong in each agent's
+# manifest (agent.yaml) and should migrate out of this shared list over time.
+
+# --- Backend (FastAPI) ---
+fastapi
+uvicorn
+pyyaml
+
+# --- Shared runtime ---
+python-dotenv
+
+# --- Drafter agent (LangChain + DeepSeek) ---
+langchain
 langchain-deepseek
-langchain_openai
+langchain-openai
 langchain-classic
+
+# --- RAG agent (retrieval stack) ---
 langchain-community
 langchain-huggingface
-langchain_chroma
-langchain
-
-python-dotenv
-asyncio
-
-crewai
-sentence_transformers
+langchain-chroma
+langchain-text-splitters
+langgraph
+sentence-transformers
 pymupdf
+
+# --- Multi-agent framework ---
+crewai

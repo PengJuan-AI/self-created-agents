@@ -25,3 +25,7 @@ workspace/archive/*
 .DS_Store
 .pytest_cache/
 .mypy_cache/
+
+# Frontend dependencies and build output
+node_modules/
+frontend/dist/

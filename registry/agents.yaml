@@ -1,5 +1,5 @@
 version: 1
-updated: 2026-09-25
+updated: 2026-09-27
 agents:
   - id: drafter
     name: Drafter
@@ -8,6 +8,8 @@ agents:
     category: writing
     status: ready
     visibility: private
+    icon: "✎"
+    route: /agents/drafter
     entrypoint: agents/drafter/Drafter.py
     manifest: agents/drafter/agent.yaml
     tags: [writing, documents, revision]
@@ -19,6 +21,7 @@ agents:
     category: research
     status: building
     visibility: private
+    icon: "⌁"
     entrypoint: agents/rag/rag_agent.py
     manifest: agents/rag/agent.yaml
     tags: [research, retrieval, documents]
