@@ -1,0 +1,21 @@
+# Render Blueprint — self-created-agents 后端（FastAPI）
+# 部署方式：Render 控制台 → New → Blueprint → 连接本仓库（deploy-backend 分支）
+# 首次部署后，Render 会提示配置下面 sync:false 的环境变量。
+
+services:
+  - type: web
+    name: agents-hub-backend
+    runtime: python
+    plan: free                      # 跑 sentence-transformers/torch 时建议改为 starter（1GB+）
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false                 # 密钥不提交，在 Render 控制台 Environment 里手动填
+      - key: DEEPSEEK_MODEL
+        value: deepseek-v4-pro
+      - key: HUGGINGFACEHUB_API_TOKEN
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://self-created-agents-eight.vercel.app
